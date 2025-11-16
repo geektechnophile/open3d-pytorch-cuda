@@ -1,0 +1,37 @@
+# Ignore Git metadata
+.git
+.gitignore
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python cache / compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+
+# Python packaging
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Micromamba / Conda
+.micromamba/
+.env
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# IDE / editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Docker / compose
+docker-compose.override.yml

@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  open3d-pytorch:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        IMAGE_NAME: ${IMAGE_NAME}
+        IMAGE_REPO: ${IMAGE_REPO}
+        IMAGE_VERSION: ${IMAGE_VERSION}
+    image: ${IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_VERSION}
+    container_name: open3d-pytorch-container
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+    volumes:
+      - ${WORKSPACE}:/workspace
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    runtime: nvidia
