@@ -10,6 +10,7 @@ fi
 WORKSPACE=${WORKSPACE:-$(pwd)}
 IMAGE_TAG=${IMAGE_VERSION:-latest}
 
-docker run --gpus all -it --rm \
+docker run -it --rm \
+    --gpus all \
     -v "$WORKSPACE":/workspace \
     ${IMAGE_REPO}/${IMAGE_NAME}:$IMAGE_TAG

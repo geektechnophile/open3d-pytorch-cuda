@@ -46,7 +46,30 @@ IMAGE_VERSION=1.1
 
 ## Usage
 
-### Option 1: Docker CLI
+### Option 1: Use Public Docker Hub Image (No Build Required)
+
+Pull the prebuilt GPU-enabled Open3D + PyTorch image:
+
+```bash
+docker pull geektechnophile/open3d-pytorch-cuda:latest
+```
+
+Or pull a specific version:
+
+```bash
+docker pull geektechnophile/open3d-pytorch-cuda:1.0
+```
+
+Run it with GPU support:
+
+```bash
+docker run --gpus all -it \
+    -v $(pwd):/workspace \
+    geektechnophile/open3d-pytorch-cuda:latest \
+    bash
+```
+---
+### Option 2: Docker CLI
 
 #### Build the image
 
@@ -73,7 +96,7 @@ WORKSPACE=/path/to/workspace IMAGE_VERSION=1.0 ./run.sh
 
 ---
 
-### Option 2: Docker Compose
+### Option 3: Docker Compose
 
 ```bash
 docker-compose up --build
@@ -86,34 +109,34 @@ docker-compose up --build
 ```bash
 docker exec -it open3d-pytorch-container /bin/bash
 ```
-
 ---
 
 ### Access Micromamba Environments
 
-Initialize Micromamba for your shell:
+* CActivate environments:
 
-```bash
-eval "$(micromamba shell hook --shell bash)"
-micromamba shell init --shell bash --root-prefix=~/.local/share
-```
+    ```bash
+        micromamba activate open3d_pytorch_env
+    ```
 
-Activate environments:
+* Check if Open3D is installed:
 
-* **Open3D environment:**
+    ```bash
+    python3 -c "import open3d as o3d; print('Open3D version:', o3d.__version__)"
+    ```
 
-```bash
-micromamba activate open3d_pytorch_env
-python -c "import open3d as o3d; print(o3d.__version__)"
-```
+* Check if PyTorch is installed:
 
-* **PyTorch environment:**
-
-```bash
-micromamba activate open3d_pytorch_env
-python -c "import torch; print(torch.__version__); print(torch.cuda.is_available())"
-```
-
+    ```bash
+        # CPU-only check
+        python3 -c "import torch; print('PyTorch version:', torch.__version__)"
+    
+        # Check GPU availability*
+        python3 -c "import torch; print('CUDA available:', torch.cuda.is_available())"
+        # Check GPU model PyTorch detects
+        python3 -c "import torch; print(torch.cuda.get_device_name(0))"
+    
+    ```
 ---
 
 ## Included Packages
