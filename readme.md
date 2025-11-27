@@ -113,7 +113,7 @@ docker exec -it open3d-pytorch-container /bin/bash
 
 ### Access Micromamba Environments
 
-* CActivate environments:
+* Activate environments:
 
     ```bash
         micromamba activate open3d_pytorch_env
