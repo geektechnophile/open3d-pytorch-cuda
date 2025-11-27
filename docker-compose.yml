@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   open3d-pytorch:
     build:

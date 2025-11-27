@@ -1,176 +1,185 @@
-# Open3D + PyTorch Docker Image (debian:bookworm-slim + CUDA 13.0)
+# Open3D + PyTorch Docker Image
 
-This Docker image provides **Open3D with GPU support** (for NVIDIA RTX 4070) and **PyTorch with CUDA 13.0** on debian:bookworm-slim. It is designed for 3D data processing, visualization, and deep learning projects.
+**(debian:bookworm-slim + CUDA 13.0)**
 
----
-
-## Features
-
-* debian:bookworm-slim base
-* CUDA 13.0 toolkit installed
-* Open3D 0.18.0 with GPU support
-* PyTorch 2.9.0, torchvision 0.24.0, torchaudio 2.9.0 with CUDA 13.0
-* Micromamba environments for isolation
-* Custom workspace directory mount (dynamic via `.env`)
-* Supports GPU via NVIDIA runtime
-* Can be run via Docker CLI or Docker Compose
-* Fully configurable using `.env` file
+This Docker image provides a **fully GPU-accelerated development environment** featuring **Open3D** and **PyTorch** built with **CUDA 13.0** support—ideal for 3D data processing, visualization, and deep-learning workflows.
+Tested and tuned for **NVIDIA RTX 4070** (Ada Lovelace, compute capability 8.6).
 
 ---
 
-## GPU Requirements
+## 🚀 Key Features
 
-* NVIDIA GPU required
-* Tested on **RTX 4070 (Ada Lovelace, compute capability 8.6)**
-* GPU memory: 8 GB
-* Requires **NVIDIA Container Toolkit** installed on host
+* **Minimal & fast base:** `debian:bookworm-slim`
+* **CUDA 13.0 Toolkit** with GPU acceleration
+* **Open3D 0.18.0** compiled with **full GPU support**
+* **PyTorch 2.9.0**, **torchvision 0.24.0**, **torchaudio 2.9.0** (CUDA 13.0 builds)
+* **Micromamba-based environments** for clean, isolated dependencies
+* **Dynamic workspace mounting** via `.env`
+* **Compatible with Docker CLI & Docker Compose**
+* **Ready-to-use GPU access** via NVIDIA Container Toolkit
 
 ---
 
-## `.env` Configuration
+## 🔧 GPU Requirements
 
-Create a `.env` file in the project root to customize your setup:
+* NVIDIA GPU (tested on **RTX 4070**)
+* Minimum **8 GB VRAM**
+* **NVIDIA Container Toolkit** must be installed on the host
+* Supports compute capability **8.6** and above
 
-```text
-# .env
-WORKSPACE=./my_workspace
-IMAGE_NAME=open3d_pytorch_cuda
-IMAGE_REPO=geektechnophile/ml_environment
-IMAGE_VERSION=1.1
-```
+---
 
-* `WORKSPACE` – Local folder to mount inside the container as `/workspace`.
-* `IMAGE_NAME` – Docker image name.
-* `IMAGE_REPO` – Docker Hub repository.
-* `IMAGE_VERSION` – Image version tag.
+## ⚙️ `.env` Configuration
 
-## Usage
+Create a `.env` file at the project root to customize behavior:
 
-### Option 1: Use Public Docker Hub Image (No Build Required)
+* `WORKSPACE` → Host directory mounted as `/workspace`
+* `IMAGE_NAME` → Docker image name
+* `IMAGE_REPO` → Docker Hub repository
+* `IMAGE_VERSION` → Image version tag
 
-Pull the prebuilt GPU-enabled Open3D + PyTorch image:
+This lets you version, name, and organize images effortlessly.
+
+---
+
+## 📦 Usage Options
+
+### **Option 1 — Pull Prebuilt Docker Hub Image (Recommended)**
+
+**Latest version:**
 
 ```bash
 docker pull geektechnophile/open3d-pytorch-cuda:latest
 ```
 
-Or pull a specific version:
+**Specific version:**
 
 ```bash
 docker pull geektechnophile/open3d-pytorch-cuda:1.0
 ```
 
-Run it with GPU support:
+**Run with GPU enabled:**
 
 ```bash
 docker run --gpus all -it \
-    -v $(pwd):/workspace \
-    geektechnophile/open3d-pytorch-cuda:latest \
-    bash
+  -v $(pwd):/workspace \
+  geektechnophile/open3d-pytorch-cuda:latest \
+  bash
 ```
----
-### Option 2: Docker CLI
 
-#### Build the image
+---
+
+### **Option 2 — Build via Docker CLI**
+
+**Build image from `.env`:**
 
 ```bash
 ./scripts/build.sh
 ```
 
-This script reads the `.env` file and builds the image with the specified repository, name, and version.
-
-#### Run the container
+**Run container:**
 
 ```bash
-.scripts/run.sh
+./scripts/run.sh
 ```
 
-* Mounts the workspace folder defined in `.env`.
-* Passes GPU to the container automatically.
-
-You can optionally override workspace and version via command line:
-
-```bash
-WORKSPACE=/path/to/workspace IMAGE_VERSION=1.0 ./run.sh
-```
+This automatically mounts your workspace and exposes GPU resources.
 
 ---
 
-### Option 3: Docker Compose
+### **Option 3 — Use Docker Compose**
+
+**Build + Run:**
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
-* Compose file automatically reads `.env` variables.
-* To run detached: `docker-compose up -d`
-* Access container shell:
+**Run without rebuilding:**
+
+```bash
+docker compose up
+```
+
+**Detached (background) mode:**
+
+```bash
+docker compose up -d
+```
+
+**Open container shell:**
 
 ```bash
 docker exec -it open3d-pytorch-container /bin/bash
 ```
----
 
-### Access Micromamba Environments
-
-* CActivate environments:
-
-    ```bash
-        micromamba activate open3d_pytorch_env
-    ```
-
-* Check if Open3D is installed:
-
-    ```bash
-    python3 -c "import open3d as o3d; print('Open3D version:', o3d.__version__)"
-    ```
-
-* Check if PyTorch is installed:
-
-    ```bash
-        # CPU-only check
-        python3 -c "import torch; print('PyTorch version:', torch.__version__)"
-    
-        # Check GPU availability*
-        python3 -c "import torch; print('CUDA available:', torch.cuda.is_available())"
-        # Check GPU model PyTorch detects
-        python3 -c "import torch; print(torch.cuda.get_device_name(0))"
-    
-    ```
----
-
-## Included Packages
-
-* **Open3D:** 0.18.0
-* **PyTorch:** 2.9.0 with CUDA 13.0
-* **Torchvision:** 0.24.0 with CUDA 13.0
-* **Torchaudio:** 2.9.0 with CUDA 13.0
-
----
-
-## Notes
-
-* Designed for Ubuntu 22.04LTS with Docker ≥ 23.0
-* Micromamba is used for smaller image size and faster builds
-* Use `micromamba clean --all --yes` to reduce image size
-* Users can mount **any host directory** as `/workspace` dynamically via `.env`
-* Supports both **Docker CLI** and **Docker Compose** for GPU-enabled containers
-
----
-
-## Build & Versioning
-
-Using the `.env` file, you can build any version:
+**Stop containers:**
 
 ```bash
-./build.sh          # Builds version specified in .env
-./build.sh 1.0      # Optionally override version
+docker compose down
 ```
 
-Docker images will be tagged as:
+---
 
+## 🐍 Micromamba Environments
+
+**Activate environment:**
+
+```bash
+micromamba activate open3d-pytorch-env
 ```
+
+**Verify Open3D installation:**
+
+```bash
+python3 -c "import open3d as o3d; print('Open3D version:', o3d.__version__)"
+python3 -c "import open3d as o3d; print('Open3D CUDA available:', o3d.core.cuda.is_available())"
+```
+
+**Verify PyTorch installation:**
+
+```bash
+python3 -c "import torch; print('PyTorch version:', torch.__version__)"
+python3 -c "import torch; print('CUDA available:', torch.cuda.is_available())"
+python3 -c "import torch; print(torch.cuda.get_device_name(0))"
+```
+
+---
+
+## 📚 Included Packages
+
+* **Open3D:** 0.18.0 (GPU-enabled)
+* **PyTorch:** 2.9.0 (CUDA 13.0)
+* **Torchvision:** 0.24.0 (CUDA 13.0)
+* **Torchaudio:** 2.9.0 (CUDA 13.0)
+
+---
+
+## 📝 Notes
+
+* Optimized for **Ubuntu 22.04 LTS** + Docker ≥ 23.0
+* Build efficiency improved via Micromamba
+* Reduce image size using:
+
+  ```bash
+  micromamba clean --all --yes
+  ```
+* Any host directory can be mounted into `/workspace`
+* Works seamlessly with both **CLI** and **Compose** workflows
+
+---
+
+## 🔖 Build & Versioning
+
+Build using the version specified in `.env`:
+
+```bash
+./build.sh
+```
+
+Images are auto-tagged as:
+
+```bash
 ${IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_VERSION}
 ${IMAGE_REPO}/${IMAGE_NAME}:latest
 ```
-
