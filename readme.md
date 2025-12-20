@@ -1,185 +1,246 @@
-# Open3D + PyTorch Docker Image
+<div align="center">
 
-**(debian:bookworm-slim + CUDA 13.0)**
+# 🚀 Open3D + PyTorch (CUDA 13) Docker Image
 
-This Docker image provides a **fully GPU-accelerated development environment** featuring **Open3D** and **PyTorch** built with **CUDA 13.0** support—ideal for 3D data processing, visualization, and deep-learning workflows.
-Tested and tuned for **NVIDIA RTX 4070** (Ada Lovelace, compute capability 8.6).
+### ⚡ GPU-Accelerated • 🐍 Python 3.11 • 🧠 Deep Learning • 🧊 3D Processing
+
+<br/>
+
+**A clean, reproducible, CUDA-enabled Docker environment for Open3D & PyTorch**
+Built with **Micromamba**, powered by **CUDA 13.0 Python wheels**, and optimized for **modern NVIDIA GPUs**
+
+<br/>
+
+<img src="https://img.shields.io/badge/CUDA-13.0-green?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/PyTorch-2.9.0-red?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/Open3D-0.18.0-blue?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/Python-3.11-yellow?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/GHCR-Ready-black?style=for-the-badge"/>
+
+</div>
+
+---
+
+## ✨ Why This Image?
+
+> **No system CUDA. No bloated base image. No magic.**
+> Just **explicit CUDA wheels**, **clean layers**, and **reproducible builds**.
+
+✔ Ideal for:
+
+* 3D vision & geometry processing
+* Point clouds & mesh pipelines
+* GPU-accelerated deep learning
+* Research, prototyping, and production
+
+✔ Tested on **NVIDIA RTX 4070 (Ada Lovelace, SM 8.6)**
+
+---
+
+## 🧱 Architecture Overview
+
+```text
+┌────────────────────────────┐
+│ mambaorg/micromamba        │
+│  └── Python 3.11 env       │
+│       ├── Open3D 0.18.0    │
+│       ├── PyTorch 2.9.0   │
+│       ├── CUDA 13 Wheels  │
+│       └── JupyterLab      │
+└────────────────────────────┘
+```
+
+🔹 CUDA is provided **entirely via PyTorch wheels**
+🔹 Each CUDA component is installed in its **own Docker layer**
+🔹 Smaller, cleaner, and easier to debug than toolkit-based images
 
 ---
 
 ## 🚀 Key Features
 
-* **Minimal & fast base:** `debian:bookworm-slim`
-* **CUDA 13.0 Toolkit** with GPU acceleration
-* **Open3D 0.18.0** compiled with **full GPU support**
-* **PyTorch 2.9.0**, **torchvision 0.24.0**, **torchaudio 2.9.0** (CUDA 13.0 builds)
-* **Micromamba-based environments** for clean, isolated dependencies
-* **Dynamic workspace mounting** via `.env`
-* **Compatible with Docker CLI & Docker Compose**
-* **Ready-to-use GPU access** via NVIDIA Container Toolkit
+### 🧊 Base & Environment
+
+* **Micromamba base image**
+* **Python 3.11 isolated environment**
+* Fast dependency resolution & clean layering
+
+### ⚡ GPU Acceleration
+
+* **CUDA 13.0 runtime (wheel-based)**
+* cuDNN, cuBLAS, cuFFT, cuRAND, cuSOLVER
+* NCCL, NVRTC, NVTX, cuFile, cuSPARSELt
+
+### 🧠 ML & 3D Stack
+
+* **Open3D 0.18.0** (GPU enabled)
+* **PyTorch 2.9.0 + cu130**
+* **Triton 3.5.0**
+
+### 🧪 Developer Ready
+
+* Jupyter Notebook
+* JupyterLab
+* Workspace mounting
+* Docker Compose support
 
 ---
 
-## 🔧 GPU Requirements
+## 🖥️ GPU Requirements
 
-* NVIDIA GPU (tested on **RTX 4070**)
-* Minimum **8 GB VRAM**
-* **NVIDIA Container Toolkit** must be installed on the host
-* Supports compute capability **8.6** and above
-
----
-
-## ⚙️ `.env` Configuration
-
-Create a `.env` file at the project root to customize behavior:
-
-* `WORKSPACE` → Host directory mounted as `/workspace`
-* `IMAGE_NAME` → Docker image name
-* `IMAGE_REPO` → Docker Hub repository
-* `IMAGE_VERSION` → Image version tag
-
-This lets you version, name, and organize images effortlessly.
+| Requirement              | Status         |
+| ------------------------ | -------------- |
+| NVIDIA GPU               | ✅ Required     |
+| VRAM                     | ≥ 8 GB         |
+| CUDA on host             | ❌ Not required |
+| NVIDIA Container Toolkit | ✅ Required     |
+| Compute capability       | ≥ 8.6          |
 
 ---
 
-## 📦 Usage Options
+## 📦 Get the Image (GHCR)
 
-### **Option 1 — Pull Prebuilt Docker Hub Image (Recommended)**
-
-**Latest version:**
+### 🔹 Pull from GitHub Container Registry
 
 ```bash
-docker pull geektechnophile/open3d-pytorch-cuda:latest
+docker pull ghcr.io/geektechnophile/open3d-pytorch-cuda:1.0
 ```
 
-**Specific version:**
-
-```bash
-docker pull geektechnophile/open3d-pytorch-cuda:1.0
-```
-
-**Run with GPU enabled:**
+### 🔹 Run with GPU enabled
 
 ```bash
 docker run --gpus all -it \
   -v $(pwd):/workspace \
-  geektechnophile/open3d-pytorch-cuda:latest \
+  ghcr.io/geektechnophile/open3d-pytorch-cuda:1.0 \
   bash
 ```
 
 ---
 
-### **Option 2 — Build via Docker CLI**
+## ⚙️ Optional `.env` Configuration
 
-**Build image from `.env`:**
-
-```bash
-./scripts/build.sh
+```env
+WORKSPACE=/absolute/path/to/project
+IMAGE_REPO=ghcr.io/geektechnophile
+IMAGE_NAME=open3d-pytorch-cuda
+IMAGE_VERSION=1.0
 ```
 
-**Run container:**
-
-```bash
-./scripts/run.sh
-```
-
-This automatically mounts your workspace and exposes GPU resources.
+📁 Host directory → `/workspace`
+🏷️ Clean image versioning & tagging
 
 ---
 
-### **Option 3 — Use Docker Compose**
-
-**Build + Run:**
-
-```bash
-docker compose up --build
-```
-
-**Run without rebuilding:**
-
-```bash
-docker compose up
-```
-
-**Detached (background) mode:**
-
-```bash
-docker compose up -d
-```
-
-**Open container shell:**
-
-```bash
-docker exec -it open3d-pytorch-container /bin/bash
-```
-
-**Stop containers:**
-
-```bash
-docker compose down
-```
-
----
-
-## 🐍 Micromamba Environments
-
-**Activate environment:**
+## 🐍 Activate Environment
 
 ```bash
 micromamba activate open3d-pytorch-env
 ```
 
-**Verify Open3D installation:**
+---
+
+## ✅ Verify Installation
+
+### 🧊 Open3D
 
 ```bash
-python3 -c "import open3d as o3d; print('Open3D version:', o3d.__version__)"
-python3 -c "import open3d as o3d; print('Open3D CUDA available:', o3d.core.cuda.is_available())"
+python -c "import open3d as o3d; print(o3d.__version__)"
+python -c "import open3d as o3d; print(o3d.core.cuda.is_available())"
 ```
 
-**Verify PyTorch installation:**
+### 🔥 PyTorch
 
 ```bash
-python3 -c "import torch; print('PyTorch version:', torch.__version__)"
-python3 -c "import torch; print('CUDA available:', torch.cuda.is_available())"
-python3 -c "import torch; print(torch.cuda.get_device_name(0))"
+python -c "import torch; print(torch.__version__)"
+python -c "print(torch.cuda.is_available())"
+python -c "print(torch.cuda.get_device_name(0))"
 ```
 
 ---
 
-## 📚 Included Packages
+## 📚 Included Software
 
-* **Open3D:** 0.18.0 (GPU-enabled)
-* **PyTorch:** 2.9.0 (CUDA 13.0)
-* **Torchvision:** 0.24.0 (CUDA 13.0)
-* **Torchaudio:** 2.9.0 (CUDA 13.0)
+### Core
+
+* Python **3.11**
+* Open3D **0.18.0**
+* PyTorch **2.9.0 + cu130**
+* Triton **3.5.0**
+
+### CUDA Libraries (Wheel-based)
+
+* cuDNN 9.x
+* cuBLAS
+* cuFFT
+* cuRAND
+* cuSOLVER
+* cuSPARSE / cuSPARSELt
+* NCCL
+* NVRTC / NVTX
+* cuFile
+
+### Tools
+
+* Jupyter Notebook
+* JupyterLab
 
 ---
 
-## 📝 Notes
+## 🧹 Image Optimization
 
-* Optimized for **Ubuntu 22.04 LTS** + Docker ≥ 23.0
-* Build efficiency improved via Micromamba
-* Reduce image size using:
+```bash
+micromamba clean --all --yes
+```
 
-  ```bash
-  micromamba clean --all --yes
-  ```
-* Any host directory can be mounted into `/workspace`
-* Works seamlessly with both **CLI** and **Compose** workflows
+✔ Removes cache
+✔ Keeps runtime lean
+✔ Improves layer reuse
 
 ---
 
-## 🔖 Build & Versioning
-
-Build using the version specified in `.env`:
+## 🔖 Build & Tagging
 
 ```bash
 ./build.sh
 ```
 
-Images are auto-tagged as:
+Generated tags:
 
-```bash
-${IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_VERSION}
-${IMAGE_REPO}/${IMAGE_NAME}:latest
+```text
+ghcr.io/geektechnophile/open3d-pytorch-cuda:1.0
+ghcr.io/geektechnophile/open3d-pytorch-cuda:latest
 ```
+
+---
+
+## 💡 Design Philosophy
+
+> **Explicit > Implicit**
+> **Reproducible > Convenient**
+> **Lean > Bloated**
+
+This image avoids:
+
+* System CUDA toolkits
+* Monolithic installs
+* Hidden dependencies
+
+---
+
+## 🧭 Roadmap (Optional)
+
+* 🔹 Slim runtime-only image
+* 🔹 Multi-GPU NCCL tuning
+* 🔹 CI-based GHCR publishing
+* 🔹 Layer size breakdown
+
+---
+
+<div align="center">
+
+### ⭐ If this image helps you, give the repo a star
+
+Built with ❤️ for GPU-heavy workflows
+
+</div>
+
+ 

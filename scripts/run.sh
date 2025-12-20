@@ -12,5 +12,6 @@ IMAGE_TAG=${IMAGE_VERSION:-latest}
 
 docker run -it --rm \
     --gpus all \
+    -p 8888:8888 \
     -v "$WORKSPACE":/workspace \
     ${IMAGE_REPO}/${IMAGE_NAME}:$IMAGE_TAG
